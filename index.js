@@ -4,7 +4,7 @@ var express = require('express'),
 	traffic = require('./traffic'),
 	_ = require('lodash'),
 	router,
-	port = process.env.PORT || 8080;
+	port = process.env.PORT || 3001;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
