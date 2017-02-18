@@ -18,5 +18,12 @@
   "bugs": {
     "url": "https://github.com/arrian/traffic-simulator-api/issues"
   },
-  "homepage": "https://github.com/arrian/traffic-simulator-api#readme"
+  "homepage": "https://github.com/arrian/traffic-simulator-api#readme",
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.24",
+    "xml2js": "^0.4.17"
+  }
 }
