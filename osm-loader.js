@@ -1,7 +1,7 @@
 var fs = require('fs'),
     xml2js = require('xml2js'),
 	client = require('mongodb').MongoClient,
-	parser = new xml2js.Parser({ mergeAttrs: true }),
+	parser = new xml2js.Parser({ mergeAttrs: true, explicitArray: false }),
 	url = require('./config').mongo.url,
 	_ = require('lodash');
 
@@ -19,7 +19,7 @@ function loadFile(filename) {
 		    	}
 
 		    	// console.dir(result.osm.node);
-		        // console.dir(result);
+		        console.dir(result);
 		        resolve(result);
 		    });
 		});
@@ -34,6 +34,11 @@ function insert(db, collectionName, data) {
 	_.each(data, item => collection.insert(item));
 }
 
+function toArray(possibleArray) {
+	if(!possibleArray) return [];
+	return _.isArray(possibleArray) ? possibleArray : [possibleArray];
+}
+
 /**
 Store street data in database
 **/
@@ -45,9 +50,19 @@ function storeData(data) {
 				throw err;
 			}
 			console.log("Connected to database");
+			
+			//TODO: ensure arrays in data are arrays. eg. ensure all nd are arrays in ways
+
+			data.osm.node = toArray(data.osm.node);
+			data.osm.way = toArray(data.osm.way);
+			data.osm.relation = toArray(data.osm.relation);
+
+			_.each(data.osm.way, way => {
+				way.nd = toArray(way.nd);
+				way.tag = toArray(way.tag);
+			});
 
 			insert(db, 'nodes', data.osm.node);
-			insert(db, 'bounds', data.osm.bounds);
 			insert(db, 'ways', data.osm.way);
 			insert(db, 'relations', data.osm.relation);
 
@@ -58,5 +73,5 @@ function storeData(data) {
 	});	
 }
 
-loadFile(__dirname + '/street.xml').then(file => storeData(file));
+loadFile(__dirname + '/kambah1.osm').then(file => storeData(file));
 
